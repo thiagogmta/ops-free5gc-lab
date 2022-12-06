@@ -1,0 +1,187 @@
+---
+#- name: Destroy cluster before starting again
+#  command: kubeadm reset -f
+
+# Instalação de pacotes iniciais necessários ao ambiente
+- hosts: all
+  become: true
+  tasks:
+  - name: Install packages that allow apt to be used over HTTPS
+    apt:
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg2
+      - software-properties-common
+      - net-tools
+      - make
+      - gcc
+  
+  # Instalação do Helm
+  - name: Helm instalation
+    shell:
+      cmd: |
+        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+        chmod 700 get_helm.sh
+        ./get_helm.sh
+
+  # Instalação do Gtp5G para funcionamento da UPF
+  # Foi necessário instalar o pacote linux-headers pois não havia o diretório build em /lib/modules/<kernel_version para que atendesse os requisitos do gtp5g
+  - name: Gtp5G Instalation
+    shell: 
+      cmd: |
+        sudo apt install -y linux-headers-5.4.0-110-generic
+        git clone https://github.com/free5gc/gtp5g.git
+        cd gtp5g
+        make
+        sudo make install
+
+  # Instalação do ContainerD
+  - name: Install containerd
+    apt:
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+      - containerd
+
+# Removendo Swap para iniciar o Kubelet
+  - name: Remove swapfile from /etc/fstab
+    mount:
+      name: "{{ item }}"
+      fstype: swap
+      state: absent
+    with_items:
+      - swap
+      - none
+
+  - name: Disable swap
+    command: swapoff -a
+    when: ansible_swaptotal_mb > 0
+
+# Instalando Kubelet, Kubeadm e Kubectl
+  - name: Add an apt signing key for Kubernetes
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present
+
+  - name: Adding apt repository for Kubernetes
+    apt_repository:
+      repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+      filename: kubernetes.list
+
+  - name: Install Kubernetes binaries
+    apt: 
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+        - kubelet=1.23.0-00
+        - kubeadm=1.23.0-00
+        - kubectl=1.23.0-00
+
+# Configuração do ContainerD
+  - name: Configura containerd
+    blockinfile:
+      create: true
+      path: /etc/modules-load.d/containerd.conf
+      block: |
+        overlay
+        br_netfilter
+  
+  - name: Enable kernel modules
+    shell: |
+      modprobe overlay
+      modprobe br_netfilter
+  
+  - name: Configure IP forwarding and iptables
+    blockinfile:
+      create: true
+      path: /etc/sysctl.conf
+      block: |
+        net.bridge.bridge-nf-call-iptables = 1
+        net.ipv4.ip_forward = 1
+  
+  - name: Persist changes
+    command: sysctl -p
+
+  - name: Get IP eth1 addr
+    shell: ifconfig eth1 | grep 'inet' | cut -d{{':'}} -f2 | awk '{ print $2 }'
+    register: output
+
+  - name: Configure Kubelet
+    lineinfile:
+      path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+      line: Evironmet="KUBELET_EXTRA_ARGS=--node-ip={{ output.stdout }}"
+
+# Iniciando o cluster  
+  - name: Initialize the kubernetes cluster using Kubeadm
+    command: kubeadm init --apiserver-advertise-address="192.168.50.10" --apiserver-cert-extra-sans="192.168.50.10" --pod-network-cidr=172.16.0.0/16
+  
+  - name: Create kube directory
+    file:
+      path: /home/vagrant/.kube
+      state: directory
+  
+  - name: Setup kubeconfig for vagrant user
+    copy:
+      src: /etc/kubernetes/admin.conf
+      dest: /home/vagrant/.kube/config
+      remote_src: yes
+      owner: vagrant
+      group: vagrant
+      mode: '0644'
+
+# Instalação do Calico CNI
+  - name: Download calico.conf
+    get_url:
+      url: https://docs.projectcalico.org/v3.20/manifests/calico.yaml
+      dest: /home/vagrant/calico.yaml
+  
+  - name: Add pod config to calico.yaml
+    lineinfile:
+      dest: /home/vagrant/calico.yaml
+      regexp: '^\s{12}#\s*- name: CALICO_IPV4POOL_CIDR.*$'
+      line: '            - name: CALICO_IPV4POOL_CIDR'
+
+  - name: Add pod config to calico.yaml
+    lineinfile:
+      dest: /home/vagrant/calico.yaml
+      regexp: '^\s{12}#\s*  value: "192.168.0.0\/16".*$'
+      line: '              value: "172.16.0.0/16"'
+  
+  - name: Install calico CNI
+    become: false
+    command: kubectl create -f calico.yaml
+
+# Gerando kube join
+  - name: Generate join command
+    command: kubeadm token create --print-join-command
+    register: join_command
+
+  - name: Copy join command to local file
+    become: false
+    local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
+
+###
+# Instalação do Go Language
+# - name: Go Instalation
+#   shell:
+#     cmd: |
+#       sudo rm -rf /usr/local/go
+#       wget https://golang.org/dl/go1.15.8.linux-amd64.tar.gz
+#       sudo tar -C /usr/local -xzf go1.15.8.linux-amd64.tar.gz
+#       mkdir -p ~/go/{bin,pkg,src}
+#       echo 'export GOPATH=$HOME/go' >> ~/.bashrc
+#       echo 'export GOROOT=/usr/local/go' >> ~/.bashrc
+#       echo 'export PATH=$PATH:$GOPATH/bin:$GOROOT/bin' >> ~/.bashrc
+#       echo 'export GO111MODULE=auto' >> ~/.bashrc
+#       source ~/.bashrc
