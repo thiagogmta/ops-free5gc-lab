@@ -1,9 +1,10 @@
-# 5G - 
+# One Piece of Sea: 5G Core Orchestration Lab
 
-Orquestração
-5G
-Kubernetes
-Kubeadm
+**Palavras chave:**
+- 5G
+- Orquestração / Orchestration
+- Kubernetes
+- Kubeadm
 
 Thiago Guimarães Tavares   
 thiagogmta@ifto.edu.br
@@ -11,25 +12,27 @@ thiagogmta@ifto.edu.br
 ## Status do Projeto
 
 > :construction: Projeto em construção ainda não funcional :construction:
+> Concluído: Construção do Cluster
+> Em andamento: Criação do Volume persistente; Criação do namespace e aplicação dos charts para o fre5gc
 
 ## Descrição
 
-Provavelmente você já deve ter ouvido falar das redes de 5ª geração. Para que as redes de 5ª geração funcionem são empregadas diversas tecnologias dentre elas funções virtualizadas (VNFs) que compõem o núcleo da rede. Cada VNF tem sua função como: estabelecimento da conexão; autenticação; gerenciamento de sessão etc.
+Com certeza você já deve ter ouvido falar das redes de 5ª geração. Next Generation Networking (NGN). Para que as redes de 5ª geração funcionem são empregadas diversas tecnologias, dentre elas as funções virtualizadas (VNFs). Essas funções virtualizadas compõem o núcleo da rede. Cada VNF tem seu papel como: estabelecimento da conexão; autenticação; gerenciamento de sessão etc.
 
-Uma das questões em relação as redes de 5ª geração é sobre a orquestração dessas funções do núcleo. Esse repositório hospeda os arquivos necessário para criação de uma infraestrutura capaz de orquestrar o núcleo da rede.
+Uma das questões em relação às redes de 5ª geração é sobre a orquestração dessas funções do núcleo. É necessári um sistema que possa gerir esse núcleo escalando essa funções de acordo com a demanda da rede.
 
-O objetivo é criar um ambiente de testes que sirva de laboratório para experimentos diversos.
+E nesse mar de informações referente ao tema esse repositório hospeda "um pedaço de instruções". Nesse repositório você encontra os arquivos necessário para criação de uma infraestrutura capaz de orquestrar o núcleo da rede 5g. O objetivo é criar um ambiente de testes que sirva de laboratório para experimentos diversos.
 
 **A infraestrutura está organizada em:**
 
-3 Máquinas virtuais virtuais criadas através do **Vagrant** e provisionadas via **Ansible** para que possuam os pacotes necessários para o funcionamento.
+3 Máquinas virtuais virtuais criadas através do **Vagrant** e provisionadas via **Ansible** que irá garanntir os pacotes necessários para o funcionamento.
 
 - Vm1 - k8s-master - Este será o Master Node do Cluster
 - Vm2 - k8s-node1 - Este será o Worker Node 1 do Cluster
 - Vm3 - k8s-node2 - Este será o Worker Node 1 do Cluster
 
-> **Vagrant** é uma ferramenta que automatiza a criação de máquinas virtuais. O vagrant irá criar três VM`s com ubuntu server:
-> **Ansible** é uma ferramenta de automação de infraestrutura. Através dessa ferramenta será automatizado o gerenciamento de pacotes, instalação e configuração dos softwares necessários.
+> **Vagrant** é uma ferramenta que automatiza a criação de máquinas virtuais. O vagrant irá criar três VM's com ubuntu server.
+> **Ansible** é uma ferramenta de automação de infraestrutura. Através dessa ferramenta será automatizado o gerenciamento de pacotes, instalação e configuração dos softwares necessários em cada VM.
 
 **Worker Nodes**
 Caso necesside de mais (ou menos) worker nodes. Altere a quantidade da variável 'N' em Vagrantfile.
@@ -47,7 +50,7 @@ Ubuntu Focal64 20.04 Kernel 5.4.0-11-generic
 - Kubectl
 - mongoDB v3.6.8
 
-Cada VM consome 2gb de memória RAM
+Cada VM consome 2gb de memória RAM 
 
 ## Pré-requisitos
 
@@ -57,7 +60,7 @@ As ferramentas a seguir devem estar instaladas em sua máquina:
 - [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html)
 - [Oracle VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 
-> Utilizou-se para este projeto o Virtualbox na versão 6.1 (a versão 7.0 apresentou instabilidade com o Vagrant. Pode ter sido uma questão pontual, mas fica aqui registrado).
+> :warning: Utilizou-se para este projeto o Virtualbox na versão 6.1 (a versão 7.0 apresentou instabilidade com o Vagrant. Pode ter sido uma questão pontual, mas fica aqui registrado).
 
 ## Utilização
 
@@ -131,9 +134,7 @@ node2        Ready    <none>                 6m35s   v1.23.0
 Enjoy! Seu cluster está pronto para receber aplicações de teste.
 
 ## Instalação do Núcleo do 5G
-```bash
-
-```
+> :construction: Etapa em desenvolvimennto :construction:
 
 ## Tratamento de Erros
 
