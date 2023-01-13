@@ -12,6 +12,7 @@ thiagogmta@ifto.edu.br
 ## Status do Projeto
 
 > :construction: Projeto em construção ainda não funcional :construction:
+> 
 > Concluído: Construção do Cluster
 > Em andamento: Criação do Volume persistente; Criação do namespace e aplicação dos charts para o fre5gc
 
@@ -32,6 +33,7 @@ E nesse mar de informações referente ao tema esse repositório hospeda "um ped
 - Vm3 - k8s-node2 - Este será o Worker Node 1 do Cluster
 
 > **Vagrant** é uma ferramenta que automatiza a criação de máquinas virtuais. O vagrant irá criar três VM's com ubuntu server.
+> 
 > **Ansible** é uma ferramenta de automação de infraestrutura. Através dessa ferramenta será automatizado o gerenciamento de pacotes, instalação e configuração dos softwares necessários em cada VM.
 
 **Worker Nodes**
@@ -48,7 +50,6 @@ Ubuntu Focal64 20.04 Kernel 5.4.0-11-generic
 - Kubeadm v1.23
 - Kubelet
 - Kubectl
-- mongoDB v3.6.8
 
 Cada VM consome 2gb de memória RAM 
 
@@ -131,6 +132,22 @@ node1        Ready    <none>                 9m52s   v1.23.0
 node2        Ready    <none>                 6m35s   v1.23.0
 ```
 
+**Verifique se o módulo gtp5g está ativo:**
+```bash
+$ dmesg | grep gtp
+
+[  118.524085] [gtp5g] gtp5g_init: Gtp5g Module initialization Ver: 0.7.1
+[  118.524192] [gtp5g] gtp5g_init: 5G GTP module loaded
+```
+
+Caso não esteja:
+```bash
+$ cd gtp5g
+$ sudo make
+$ sudo make install
+```
+
+
 Enjoy! Seu cluster está pronto para receber aplicações de teste.
 
 ## Instalação do Núcleo do 5G
@@ -138,6 +155,7 @@ Enjoy! Seu cluster está pronto para receber aplicações de teste.
 
 ## Tratamento de Erros
 
+**Endereçamento:**
 Caso ocorra o seguinte erro de endereçamento na criação das VM`s:
 
 ```bash
@@ -156,11 +174,22 @@ $ echo '* 0.0.0.0/0 ::/0' > /etc/vbox/networks.conf
 $ chmod 644 /etc/vbox/networks.conf
 ```
 
-## Comentários
+**Erro ao subir o ambiente**
+Caso ao executar o comando `$ vagrant up` pela primeira vez:
+- Apenas o node master seja criado ou
+- Apenas o node master e 1 worker
+
+Execute o comando: `$vagrant halt` para finalizar as VMs e volte a executar o comando `$ vagrant up`.
+
+Caso continue reportando erro destrua a infra `$ vagrant destroy` e crie novamente `$ vagrant up`.
+
+## Comentários e Observações
 
 - A partir da versão 1.20 do Kubernetes o dockershin foi descontinuado e definitivamente removido na versão 1.24.
 - Este projeto utiliza a versão 1.23 do kubernetes adotando o **Containerd** em detrimento do **Docker**.
+- Para este repositório está sendo utilizando [Local Path Provisioner](https://github.com/rancher/local-path-provisioner) para armazenamento local (local storage).
+  - Por padrão dos charts helm para implantação do núcleo no cluster é utilizado Persistent Volume. O mongodb busca um Persistent Volume. Entretanto, por algum motivo, nesta infraestrutura o mongo não estava se conectando ao volume. Foi utilizado local path como medida paleativa. Dessa forma o mongo se comunica com o local storage.
+  - Posteriormente essa feature será revistada.
 
 ## Referências
 
-Esse repoistório é um fork do repositório de Lorenz Vanthillo disponível em [Vagrant-ansible-kubernetes](https://github.com/lvthillo/vagrant-ansible-kubernetes).

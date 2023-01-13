@@ -38,7 +38,7 @@
         sudo apt install -y linux-headers-5.4.0-110-generic
         git clone https://github.com/free5gc/gtp5g.git
         cd gtp5g
-        make
+        sudo make
         sudo make install
 
   # Instalação do ContainerD
@@ -171,6 +171,12 @@
     become: false
     local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
 
+# Configurando Local Path Provisioner através do rancher
+  - name: Local Path Provisioer
+    shell: 
+      cmd: |
+        kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.23/deploy/local-path-storage.yaml
+        
 ###
 # Instalação do Go Language
 # - name: Go Instalation

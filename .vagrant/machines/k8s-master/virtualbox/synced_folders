@@ -1,1 +1,1 @@
-{"virtualbox":{"/vagrant":{"guestpath":"/vagrant","hostpath":"/home/thiagogmta/free5g-kubeadm","disabled":false,"__vagrantfile":true}}}
+{"virtualbox":{"/vagrant":{"guestpath":"/vagrant","hostpath":"/home/thiagogmta/ops-free5gc-lab","disabled":false,"__vagrantfile":true}}}
