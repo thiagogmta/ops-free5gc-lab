@@ -35,10 +35,9 @@
   - name: Gtp5G Instalation
     shell: 
       cmd: |
-        sudo apt install -y linux-headers-5.4.0-110-generic
-        git clone https://github.com/free5gc/gtp5g.git
-        cd gtp5g
-        sudo make
+        sudo apt install -y linux-headers-$(uname -r)
+        git clone https://github.com/free5gc/gtp5g.git && cd gtp5g
+        make clean && make
         sudo make install
 
   # Instalação do ContainerD
@@ -170,24 +169,3 @@
   - name: Copy join command to local file
     become: false
     local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
-
-# Configurando Local Path Provisioner através do rancher
-  - name: Local Path Provisioer
-    shell: 
-      cmd: |
-        kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.23/deploy/local-path-storage.yaml
-        
-###
-# Instalação do Go Language
-# - name: Go Instalation
-#   shell:
-#     cmd: |
-#       sudo rm -rf /usr/local/go
-#       wget https://golang.org/dl/go1.15.8.linux-amd64.tar.gz
-#       sudo tar -C /usr/local -xzf go1.15.8.linux-amd64.tar.gz
-#       mkdir -p ~/go/{bin,pkg,src}
-#       echo 'export GOPATH=$HOME/go' >> ~/.bashrc
-#       echo 'export GOROOT=/usr/local/go' >> ~/.bashrc
-#       echo 'export PATH=$PATH:$GOPATH/bin:$GOROOT/bin' >> ~/.bashrc
-#       echo 'export GO111MODULE=auto' >> ~/.bashrc
-#       source ~/.bashrc

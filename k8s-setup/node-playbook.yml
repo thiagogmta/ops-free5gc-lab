@@ -24,10 +24,9 @@
   - name: Gtp5G Instalation
     shell: 
       cmd: |
-        sudo apt install -y linux-headers-5.4.0-110-generic
-        git clone https://github.com/free5gc/gtp5g.git
-        cd gtp5g
-        make
+        sudo apt install -y linux-headers-$(uname -r)
+        git clone https://github.com/free5gc/gtp5g.git && cd gtp5g
+        make clean && make
         sudo make install
 
   # Instalação do ContainerD
@@ -116,12 +115,3 @@
 
   - name: Join the node to cluster
     command: sh /tmp/join-command.sh
-
-  # - name: Copy the join command to server location
-  #   copy:
-  #     dest: /opt/kubejoin.sh
-  #     src: ./join/kubejoin.sh
-  #     mode: '0700'
-
-  # - name: Join the node to cluster
-  #   shell: /opt/kubejoin.sh

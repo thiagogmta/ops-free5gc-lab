@@ -57,11 +57,29 @@ Cada VM consome 2gb de memória RAM
 
 As ferramentas a seguir devem estar instaladas em sua máquina:
 
-- [Vagrant](https://developer.hashicorp.com/vagrant/downloads)
-- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html)
 - [Oracle VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+```bash
+$ cd
+$ wget https://download.virtualbox.org/virtualbox/6.1.42/virtualbox-6.1_6.1.42-155177~Ubuntu~jammy_amd64.deb
+$ sudo dpkg -i virtualbox-6.1_6.1.42-155177~Ubuntu~jammy_amd64.deb
+```
 
-> :warning: Utilizou-se para este projeto o Virtualbox na versão 6.1 (a versão 7.0 apresentou instabilidade com o Vagrant. Pode ter sido uma questão pontual, mas fica aqui registrado).
+- [Vagrant](https://developer.hashicorp.com/vagrant/downloads)
+```bash
+ $ wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+ $ echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+ $ sudo apt update && sudo apt install vagrant
+```
+
+- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html)
+```bash
+$ sudo apt-add-repository ppa:ansible/ansible
+$ sudo apt update
+$ sudo apt install ansible
+```
+> :warning: Dependências
+> Caso retorne erro de dependências desencontradas corrija com: 
+> $ sudo apt --fix-broken install
 
 ## Utilização
 
@@ -147,7 +165,6 @@ $ sudo make
 $ sudo make install
 ```
 
-
 Enjoy! Seu cluster está pronto para receber aplicações de teste.
 
 ## Instalação do Núcleo do 5G
@@ -157,6 +174,8 @@ Enjoy! Seu cluster está pronto para receber aplicações de teste.
 
 **Endereçamento:**
 Caso ocorra o seguinte erro de endereçamento na criação das VM`s:
+
+![The IP addres configured for the host-only](/img/errorede.png)
 
 ```bash
 The IP address configured for the host-only network is not within the allowed ranges. Please update the address used to be within the allowed ranges and run the command again.
@@ -185,6 +204,7 @@ Caso continue reportando erro destrua a infra `$ vagrant destroy` e crie novamen
 
 ## Comentários e Observações
 
+- Utilizou-se para este projeto o Virtualbox na versão 6.1 (a versão 7.0 apresentou instabilidade com o Vagrant. Pode ter sido uma questão pontual, mas fica aqui registrado).
 - A partir da versão 1.20 do Kubernetes o dockershin foi descontinuado e definitivamente removido na versão 1.24.
 - Este projeto utiliza a versão 1.23 do kubernetes adotando o **Containerd** em detrimento do **Docker**.
 - Para este repositório está sendo utilizando [Local Path Provisioner](https://github.com/rancher/local-path-provisioner) para armazenamento local (local storage).
