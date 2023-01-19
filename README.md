@@ -11,7 +11,7 @@ thiagogmta@ifto.edu.br
 
 ## Status do Projeto
 
-> :construction: Projeto em construção ainda não funcional :construction:
+> :construction: Projeto em fase de testes :construction:
 > 
 > Concluído: Construção do Cluster
 > Em andamento: Criação do Volume persistente; Criação do namespace e aplicação dos charts para o fre5gc
@@ -20,7 +20,7 @@ thiagogmta@ifto.edu.br
 
 Com certeza você já deve ter ouvido falar das redes de 5ª geração. Next Generation Networking (NGN). Para que as redes de 5ª geração funcionem são empregadas diversas tecnologias, dentre elas as funções virtualizadas (VNFs). Essas funções virtualizadas compõem o núcleo da rede. Cada VNF tem seu papel como: estabelecimento da conexão; autenticação; gerenciamento de sessão etc.
 
-Uma das questões em relação às redes de 5ª geração é sobre a orquestração dessas funções do núcleo. É necessári um sistema que possa gerir esse núcleo escalando essa funções de acordo com a demanda da rede.
+Uma das questões em relação às redes de 5ª geração é sobre a orquestração dessas funções do núcleo. É necessário um sistema que possa gerir esse núcleo escalando essa funções de acordo com a demanda da rede.
 
 E nesse mar de informações referente ao tema esse repositório hospeda "um pedaço de instruções". Nesse repositório você encontra os arquivos necessário para criação de uma infraestrutura capaz de orquestrar o núcleo da rede 5g. O objetivo é criar um ambiente de testes que sirva de laboratório para experimentos diversos.
 
@@ -86,7 +86,7 @@ $ sudo apt install ansible
 Clone este repositório:
 
 ```bash
-git clone https://github.com/thiagogmta/k8s-containerd.git
+git clone https://github.com/thiagogmta/ops-free5gc-lab.git
 ```
 
 **Iniciando o ambiente com Vagrant**
@@ -94,7 +94,7 @@ git clone https://github.com/thiagogmta/k8s-containerd.git
 Acesse o diretório do repo e crie a infraestrutura com:
 
 ```bash
-$ cd free5g-kubeadm
+$ cd ops-free5gc-lab
 $ vagrant up
 ```
 
@@ -161,7 +161,7 @@ $ dmesg | grep gtp
 Caso não esteja:
 ```bash
 $ cd gtp5g
-$ sudo make
+$ make clean && make
 $ sudo make install
 ```
 
@@ -177,13 +177,7 @@ Caso ocorra o seguinte erro de endereçamento na criação das VM`s:
 
 ![The IP addres configured for the host-only](/img/errorede.png)
 
-```bash
-The IP address configured for the host-only network is not within the allowed ranges. Please update the address used to be within the allowed ranges and run the command again.
-
-Address: 192.168.10.10 Ranges: 192.168.56.0/21
-```
-
-Faça os procedimentos a seguir em seu host e tente executar o Vagrantfile novamente.
+Faça os procedimentos a seguir em seu host:
 
 ```bash
 $ sudo su
