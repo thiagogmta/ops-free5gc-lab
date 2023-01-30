@@ -79,6 +79,7 @@ $ sudo apt install ansible
 ```
 > :warning: Dependências
 > Caso retorne erro de dependências desencontradas corrija com: 
+> 
 > $ sudo apt --fix-broken install
 
 ## Utilização
@@ -206,4 +207,3 @@ Caso continue reportando erro destrua a infra `$ vagrant destroy` e crie novamen
   - Posteriormente essa feature será revistada.
 
 ## Referências
-

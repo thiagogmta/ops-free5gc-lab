@@ -1,0 +1,49 @@
+#
+# Software Name : 5G-all-in-one-helm
+# SPDX-FileCopyrightText: Copyright (c) 2022
+# SPDX-License-Identifier: Apache-2.0
+#
+# This software is distributed under the Apache License 2.0,
+# the text of which is available at todo
+# or see the "LICENSE" file for more details.
+#
+# Author: Abderaouf KHICHANE, Ilhem FAJJARI, Ayoub BOUSSELMI
+# Software description: An open-source project providing Helm charts to deploy 5G components (Core + RAN) on top of Kubernetes
+#
+{{- if and .Values.gnb.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.gnb.service.name }}
+  labels:
+    app: {{ .Values.projectName }}
+    component: {{ .Values.gnb.name }}
+spec:
+  type: {{ .Values.gnb.service.type }}
+  ports:
+    - name: gnb-ue
+      port: {{ .Values.gnb.service.port }}
+      protocol: {{ .Values.gnb.service.protocol }}
+  selector:
+    app: {{ .Values.projectName }}
+    component: {{ .Values.gnb.name }}
+{{- end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $.Values.global.gnb.service.n2.name }}
+  labels:
+    app: {{ .Values.projectName }}
+    component: {{ .Values.gnb.name }}
+spec:
+  type: {{ $.Values.global.gnb.service.n2.type }}
+  ports:
+    - name: n2
+      port: {{ $.Values.global.gnb.service.n2.port }}
+      #protocol: {{ $.Values.global.gnb.service.n2.protocol }}  
+  clusterIP: None  
+  selector:
+    app: {{ .Values.projectName }}
+    component: {{ .Values.gnb.name }}
