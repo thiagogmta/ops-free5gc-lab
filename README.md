@@ -1,3 +1,5 @@
+![k8s-cluster](/img/cluster.png)
+
 # One Piece of Sea: 5G Core Orchestration Lab
 
 **Palavras chave:**
@@ -11,10 +13,10 @@ thiagogmta@ifto.edu.br
 
 ## Status do Projeto
 
-> :construction: Projeto em fase de testes :construction:
+> :construction: Projeto em fase de testes
 > 
-> Concluído: Construção do Cluster
-> Em andamento: Criação do Volume persistente; Criação do namespace e aplicação dos charts para o fre5gc
+> Concluído: O Cluster está iniciando com suas funções estáveis.
+> Em andamento: Testes com UERANSIN
 
 ## Descrição
 
@@ -169,7 +171,69 @@ $ sudo make install
 Enjoy! Seu cluster está pronto para receber aplicações de teste.
 
 ## Instalação do Núcleo do 5G
-> :construction: Etapa em desenvolvimennto :construction:
+
+Os comandos a seguir serão executados no **Master Node**. Primeiro clone o repositório:
+
+```bash
+$ git clone https://github.com/thiagogmta/ops-free5gc-lab.git
+```
+
+### Criando um Volume
+
+```bash
+$ mkdir /home/vagrant/kubedata
+$ kubectl apply -f /ops-free5gc-lab/volume/persistentVolume.yaml
+```
+
+### Criando um Storage Class
+
+Utilizaremos um deploy da Rancher para facilitar o processo:
+
+```bash
+$ kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.23/deploy/local-path-storage.yaml
+```
+
+#### Definindo o StorageClass como default
+
+O Storage Classe criado não está configurado como padrão. Precisamos definir como _default_ para que seja reconhecido.
+
+```bash
+$ kubectl get storageclass
+...
+NAME         PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  3h26m
+```
+
+Para definir StorageClass **local-path** como default execute:
+
+```bash
+$ kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+```
+
+Podemos verificar agora que o **local-path** é o StorageClass default.
+
+```bash
+$ kubectl get storageclass
+NAME                   PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+local-path (default)   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  3h33m
+```
+
+## Deploy do Núcleo
+
+Com o ambiente pronto iremos inserir os charts helm para o deploy do núcleo.
+
+```bash
+$ cd ops-free5gc-lab/charts
+$ helm install core free5gc
+```
+
+Podemos verificar a criação do núcleo com o comando `$ kubectl get pods`. Inicialmente o processo pode levar alguns minutos.
+
+![Deploy do núcleo](/img/creating.png)
+
+Na sequência temos todas as funções do núcleo:
+
+![Deploy do núcleo](/img/pods.png)
 
 ## Tratamento de Erros
 
@@ -199,6 +263,7 @@ Caso continue reportando erro destrua a infra `$ vagrant destroy` e crie novamen
 
 ## Comentários e Observações
 
+- A função n3iwf está desabilitada.
 - Utilizou-se para este projeto o Virtualbox na versão 6.1 (a versão 7.0 apresentou instabilidade com o Vagrant. Pode ter sido uma questão pontual, mas fica aqui registrado).
 - A partir da versão 1.20 do Kubernetes o dockershin foi descontinuado e definitivamente removido na versão 1.24.
 - Este projeto utiliza a versão 1.23 do kubernetes adotando o **Containerd** em detrimento do **Docker**.
@@ -207,3 +272,9 @@ Caso continue reportando erro destrua a infra `$ vagrant destroy` e crie novamen
   - Posteriormente essa feature será revistada.
 
 ## Referências
+
+- [5G All in One Helm](https://github.com/zanattabruno/5G-all-in-one-helm)
+- [5G Core Network Slicing](https://github.com/fhgrings/5g-core-network-slicing)
+- [My5G Ran Tester](https://github.com/my5G/my5G-RANTester/wiki)
+- [Towards 5Gs Helm](https://github.com/Orange-OpenSource/towards5gs-helm)
+- [PMon - 5G](https://github.com/my5G/PMon-5G#configuring-kubernetes)
