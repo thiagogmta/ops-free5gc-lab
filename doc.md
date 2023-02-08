@@ -108,11 +108,7 @@ sudo make install
 
 ## Deploy do Núcleo do 5G
 
-Os comandos a seguir serão executados no **Master Node**. Clone o repositório dentro do Master Node:
-
-```bash
-git clone https://github.com/thiagogmta/ops-free5gc-lab.git
-```
+Os comandos a seguir serão executados no **Master Node**. 
 
 ### Volume e Storage Class
 
