@@ -80,7 +80,7 @@ vagrant ssh k8s-master
 
 Será feito acesso a VM via SSH
 
-![Vagrant SSH](/img/vagrantssh.png)
+![Vagrant SSH](/img/sshmaster.png)
 
 **Verificando o cluster**
 
