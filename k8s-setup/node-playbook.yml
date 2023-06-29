@@ -17,7 +17,14 @@
       - software-properties-common
       - net-tools
       - make
+      - build-essential
       - gcc
+      - g++
+      - cmake
+      - libsctp-dev 
+      - lksctp-tools
+      - iproute2
+
 
   # Instalação do Gtp5G para funcionamento da UPF
   # Foi necessário instalar o pacote linux-headers pois não havia o diretório build em /lib/modules/<kernel_versionL
@@ -84,7 +91,7 @@
       block: |
         overlay
         br_netfilter
-  
+
   - name: Enable kernel modules
     shell: |
       modprobe overlay
@@ -108,10 +115,16 @@
   - name: Configure Kubelet
     lineinfile:
       path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-      line: Evironmet="KUBELET_EXTRA_ARGS=--node-ip={{ output.stdout }}"
+      line: Environment="KUBELET_EXTRA_ARGS=--node-ip={{ output.stdout }}"
 
   - name: Copy the join command to server location
     copy: src=join-command dest=/tmp/join-command.sh mode=0777
 
   - name: Join the node to cluster
     command: sh /tmp/join-command.sh
+
+ # Criação do diretório para receber o Volume Persistente
+  - name: Create Volume Directory
+    file: 
+      path: /home/vagrant/kubedata
+      state: directory 

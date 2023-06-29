@@ -20,7 +20,13 @@
       - software-properties-common
       - net-tools
       - make
+      - build-essential
       - gcc
+      - g++
+      - cmake --classic
+      - libsctp-dev 
+      - lksctp-tools
+      - iproute2
   
   # Instalação do Helm
   - name: Helm instalation
@@ -125,7 +131,7 @@
   - name: Configure Kubelet
     lineinfile:
       path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-      line: Evironmet="KUBELET_EXTRA_ARGS=--node-ip={{ output.stdout }}"
+      line: Environment="KUBELET_EXTRA_ARGS=--node-ip={{ output.stdout }}"
 
 # Iniciando o cluster  
   - name: Initialize the kubernetes cluster using Kubeadm
@@ -175,3 +181,9 @@
   - name: Copy join command to local file
     become: false
     local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
+
+ # Criação do diretório para receber o Volume Persistente
+  - name: Create Volume Directory
+    file: 
+      path: /home/vagrant/kubedata
+      state: directory 

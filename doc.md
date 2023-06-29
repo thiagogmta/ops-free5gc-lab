@@ -92,6 +92,13 @@ kubectl get nodes
 
 ![kubectl get nodes](/img/getnodes.png)
 
+ou com o comando a seguir para informações mais detalhadas:
+
+```bash
+kubectl get nodes -o wide
+```
+![kubectl get nodes -o wide](/img/nodes-o-wide.png)
+
 **Verifique se o módulo gtp5g está ativo (opicional):**
 ```bash
 dmesg | grep gtp
@@ -110,15 +117,16 @@ sudo make install
 
 Os comandos a seguir serão executados no **Master Node**. 
 
-### Volume e Storage Class
+### Volume
 
-**Criando um Volume**
+**Criando um Volume para o MongoDB**
 
 ```bash
-mkdir /home/vagrant/kubedata
-kubectl apply -f /ops-free5gc-lab/volume/persistentVolume.yaml
+cd ~
+kubectl apply -f ops-free5gc-lab/volume/persistentVolume.yaml
 ```
 
+<!-- 
 **Criando um Storage Class**
 
 Utilizaremos um deploy da Rancher para facilitar o processo:
@@ -132,6 +140,7 @@ kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisione
 ```bash
 kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 ```
+--->
 
 ### Deploy do Núcleo
 
@@ -158,9 +167,41 @@ Vá ao menu lateral Subscribers > New Subscriber > Submit (com todos os valores 
 
 ![subscribers](/img/subscribers.png)
 
+## UERANSIM
+
+[UERANSIM](https://github.com/aligungr/UERANSIM) é um simulador de UE (User Equipment) e RAN (Radio Access Network - gNodeB) de código aberto para redes 5G. O Equipamento de Usuário (UE) e a Rede de Acesso por Rádio (RAN) podem ser comparadas a um telefone celular 5G e uma estação base, respectivamente. Esse projeto pode ser utilizado para realizar testes na infraestrutura principal da rede 5G e também para estudar o funcionamento do sistema 5G.
+
+**Implantação**
+
+```bash
+cd ops-free5gc-lab/charts
+helm install ran ueransim
+```
+
+![Deploy ueransim](/img/ueransim.png)
+
+Após o deploy do chart helm você pode verificar a existências dos PODs referentes a GNB e UE com:
+
+```bash
+kubectl get pods
+```
+
+![Ueransim stable](/img/ueransim2.png)
+
+**Teste de Comunicação**
+
+Após o deploy do UERANSIM podemos acessar o POD referente ao UE para executar um teste de comunicação. Para acessar o referido POD basta:
+
+```bash
+kubectl exec -it <pod-ue-name> -- bash
+```
+
+
+
+<!-->
 ## My5G RANTester
 
-[My5G RANTester](https://github.com/my5G/my5G-RANTester) é uma ferramenta para emular planos de controle e dados do UE (equipamento de usuário) e gNB (estação base 5G).
+[My5G RANTester](https://github.com/my5G/my5G-RANTester) é uma ferramenta para emular planos de controle e dados do UE (equipamento de usuário) e gNB (estação base 5G). 
 
 **Implantação**
 
@@ -179,6 +220,12 @@ kubectl get pods
 
 **Executando o RANTester**
 
+Após o deploy e estabilização do rantester podemos acessar o contêiner em seu POD com o comando:
+
+```bash
+kubectl exec -it ran-rantester-0 bash
+```
+-->
 
 ## Monitoramento
 
