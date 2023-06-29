@@ -263,6 +263,9 @@ Caso continue reportando erro destrua a infra `$ vagrant destroy` e crie novamen
 - Utilizou-se para este projeto o Virtualbox na versão 6.1 (a versão 7.0 apresentou instabilidade com o Vagrant. Pode ter sido uma questão pontual, mas fica aqui registrado).
 - A partir da versão 1.20 do Kubernetes o dockershin foi descontinuado e definitivamente removido na versão 1.24.
 - Este projeto utiliza a versão 1.23 do kubernetes adotando o **Containerd** em detrimento do **Docker**.
+<!--
 - Para este repositório está sendo utilizando [Local Path Provisioner](https://github.com/rancher/local-path-provisioner) para armazenamento local (local storage).
   - Por padrão dos charts helm para implantação do núcleo no cluster é utilizado Persistent Volume. O mongodb busca um Persistent Volume. Entretanto, por algum motivo, nesta infraestrutura o mongo não estava se conectando ao volume. Foi utilizado local path como medida paleativa. Dessa forma o mongo se comunica com o local storage.
   - Posteriormente essa feature será revistada.
+
+-->
