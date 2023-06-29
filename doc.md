@@ -198,7 +198,7 @@ kubectl exec -it <pod-ue-name> -- bash
 
 
 
-<!-->
+<!--
 ## My5G RANTester
 
 [My5G RANTester](https://github.com/my5G/my5G-RANTester) é uma ferramenta para emular planos de controle e dados do UE (equipamento de usuário) e gNB (estação base 5G). 
