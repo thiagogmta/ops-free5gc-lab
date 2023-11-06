@@ -21,9 +21,6 @@
       - net-tools
       - make
       - build-essential
-      - gcc
-      - g++
-      - cmake --classic
       - libsctp-dev 
       - lksctp-tools
       - iproute2

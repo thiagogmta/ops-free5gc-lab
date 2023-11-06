@@ -2,15 +2,15 @@
 IMAGE_NAME = "bento/ubuntu-20.04"
 
 # Quantidade de worker nodes (caso precise de mais workers altere a quantidade)
-N = 2
+N = 3
 
 # Definições gerais de memória e processamento para cada Node
 Vagrant.configure("2") do |config|
     config.ssh.insert_key = false
 
     config.vm.provider "virtualbox" do |v|
-        v.memory = 2048
-        v.cpus = 2
+        v.memory = 1024
+        v.cpus = 1
     end
     
     # Definições do Master Node (nome, endereçamento e arquivo de playbook)

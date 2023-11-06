@@ -117,8 +117,6 @@ sudo make install
 
 Os comandos a seguir serão executados no **Master Node**. 
 
-### Volume
-
 **Criando um Volume para o MongoDB**
 
 ```bash
@@ -142,7 +140,7 @@ kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storagec
 ```
 --->
 
-### Deploy do Núcleo
+**Deploy do Núcleo**
 
 Com o ambiente pronto iremos inserir os charts helm para o deploy do núcleo.
 
@@ -155,7 +153,7 @@ Podemos verificar a criação do núcleo com o comando `$ kubectl get pods`. Ini
 
 ![kubectl get pods](/img/getpods.png)
 
-### Acessando a Interface Web
+**Acessando a Interface Web**
 
 Você pode acessar a interface web diretamente do seu host de usuário através do navegador. Para isso utilize em seu navegador o endereço IP: ***192.168.50.10:30500*** (esse é o endereço do Master Node que encontra-se no vagrantfile).
 
@@ -195,8 +193,6 @@ Após o deploy do UERANSIM podemos acessar o POD referente ao UE para executar u
 ```bash
 kubectl exec -it <pod-ue-name> -- bash
 ```
-
-
 
 <!--
 ## My5G RANTester
@@ -253,7 +249,7 @@ Caso ao executar o comando `$ vagrant up` pela primeira vez:
 - Apenas o node master seja criado ou
 - Apenas o node master e 1 worker
 
-Execute o comando: `$vagrant halt` para finalizar as VMs e volte a executar o comando `$ vagrant up`.
+Execute o comando: `$ vagrant halt` para finalizar as VMs e volte a executar o comando `$ vagrant up`.
 
 Caso continue reportando erro destrua a infra `$ vagrant destroy` e crie novamente `$ vagrant up`.
 
